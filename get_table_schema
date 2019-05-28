@@ -1,0 +1,41 @@
+package main
+
+import(
+    "fmt"
+    "database/sql"
+    _ "github.com/go-sql-driver/mysql"
+)
+
+
+func checkError(err error){
+    if err != nil{
+        fmt.Println(err)
+    }
+}
+
+func test() (schema string){
+    db, err := sql.Open("mysql", "test:test@tcp(127.0.0.1:3306)/test?charset=utf8")
+    checkError(err)
+
+    rows, err := db.Query("show create table test")
+    if err != nil {
+        fmt.Println(err.Error())
+        return 
+    }
+    defer rows.Close() 
+    for rows.Next() {
+        var tableName string
+        if err := rows.Scan(&tableName,&schema); err != nil {
+
+            fmt.Printf("get table %s schema faild", tableName)
+        }   
+    } 
+    return
+   
+    
+}
+
+func main() {
+    a := test()
+    fmt.Println(a)
+}
